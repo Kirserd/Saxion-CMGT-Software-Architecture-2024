@@ -17,7 +17,7 @@ namespace MIRAI.Grid
         public TileBase[] NonSolidTiles;
         [Space(5)]
         [SerializeField]
-        private GridCellShell _gridCellShellPrefab;
+        private GridCellShell _openShellPrefab;
         [SerializeField]
         private Transform _tilesParent;
 
@@ -65,6 +65,13 @@ namespace MIRAI.Grid
 
             HashSet<Vector2Int> uniqueShellPositions = new();
 
+            ShellPositioningData shellInstantiationData = new()
+            {
+                Offset = boundsOffset,
+                CellSize = _cellSize,
+                TilesParent = _tilesParent
+            };
+
             for (int x = bounds.xMin; x < bounds.xMax; x++)
             for (int y = bounds.yMin; y < bounds.yMax; y++)
             {
@@ -109,9 +116,8 @@ namespace MIRAI.Grid
                     }
                 }
             }
-
             InstantiateShellBatch(uniqueShellPositions);
-            FinalizeInitialisation();
+            FinalizeInitialisation(shellInstantiationData);
         }
         private void OverwriteCell(int x, int y, GridCell cell)
         {
@@ -125,15 +131,15 @@ namespace MIRAI.Grid
         {
             foreach (var position in positionsToInstantiate)
             {
-                GridCellShell instanced = Instantiate(_gridCellShellPrefab, _tilesParent);
+                GridCellShell instanced = Instantiate(_openShellPrefab, _tilesParent);
                 instanced.SetXY(position.x, position.y);
                 instanced.transform.localPosition = new Vector3(position.x * _cellSize.x, position.y * _cellSize.y);
             }
             positionsToInstantiate.Clear();
         }
-        private void FinalizeInitialisation()
+        private void FinalizeInitialisation(ShellPositioningData data)
         {
-            GridRegistrar.Refresh(_grid);
+            GridRegistrar.Refresh(_grid, data);
             Destroy(this);
         }
     }

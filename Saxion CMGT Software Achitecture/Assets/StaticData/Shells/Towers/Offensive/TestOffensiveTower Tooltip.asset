@@ -1,0 +1,17 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 27bdb4e2fad06e44890f7cd57cb84424, type: 3}
+  m_Name: TestOffensiveTower Tooltip
+  m_EditorClassIdentifier: Assembly-CSharp:MIRAI.Grid.Cell:OffensiveTowerBlueprint
+  Icon: {fileID: -628019797, guid: 10270b80484ec8946b1104d8fbffa8cf, type: 3}
+  Name: Proto[Atk]
+  Description: Prototype of a general-purpose offensive tower.

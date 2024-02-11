@@ -21,7 +21,6 @@ namespace MIRAI.Grid
         {
             if (!data.IsPressed || EventSystem.current.IsPointerOverGameObject())
                 return;
-
             SelectionBroker(Physics2D.Raycast(GetMousePositionWorld(), Vector2.zero));
         }
         private Vector3 GetMousePositionWorld()

@@ -53,7 +53,7 @@ public struct InputCallbackData
 
 public static class Controls
 {
-    private static HashSet<InputCallback> registeredInput = new()
+    private static HashSet<InputCallback> _registeredInput = new()
     {
         { new KeyCallback(KeyCode.Escape) },
         { new KeyCallback(KeyCode.Return) },
@@ -63,22 +63,22 @@ public static class Controls
 
     public static void Subscribe(InputCallback.Callback action, KeyCode key)
     {
-        if (registeredInput.FirstOrDefault(callback => callback is 
+        if (_registeredInput.FirstOrDefault(callback => callback is 
         KeyCallback kc && kc.Key == key) is not KeyCallback keyCallback)
         {
             keyCallback = new KeyCallback(key);
-            registeredInput.Add(keyCallback);
+            _registeredInput.Add(keyCallback);
         }
 
         keyCallback.CallbackHandler += action;
     }
     public static void Subscribe(InputCallback.Callback action, int mouseButton)
     {
-        if (registeredInput.FirstOrDefault(callback => callback is 
+        if (_registeredInput.FirstOrDefault(callback => callback is 
         MouseCallback mc && mc.MouseButton == mouseButton) is not MouseCallback mouseCallback)
         {
             mouseCallback = new MouseCallback(mouseButton);
-            registeredInput.Add(mouseCallback);
+            _registeredInput.Add(mouseCallback);
         }
 
         mouseCallback.CallbackHandler += action;
@@ -86,7 +86,7 @@ public static class Controls
 
     public static void Update()
     {
-        foreach (var input in registeredInput)
+        foreach (var input in _registeredInput)
             input.Invoke();
     }
 }

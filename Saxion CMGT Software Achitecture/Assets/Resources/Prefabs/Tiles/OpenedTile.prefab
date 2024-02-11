@@ -165,4 +165,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cab97a74d6e78c04fb53a066f1256982, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _shellData: {fileID: 11400000, guid: cc2de7f3e5be6d84982c37381bbae931, type: 2}
+  _shellTooltip: {fileID: 11400000, guid: cc2de7f3e5be6d84982c37381bbae931, type: 2}

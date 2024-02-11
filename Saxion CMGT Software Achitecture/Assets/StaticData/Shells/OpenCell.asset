@@ -9,8 +9,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 86df1707dce217f4491a197828e3a30a, type: 3}
+  m_Script: {fileID: 11500000, guid: 27bdb4e2fad06e44890f7cd57cb84424, type: 3}
   m_Name: OpenCell
   m_EditorClassIdentifier: 
-  Name: Empty place
-  Description: 'You can build [Attacking] & [Gathering] Towers here. '
+  Icon: {fileID: 0}
+  Name: Empty cell
+  Description: Suitable for building [Offensive] or [Gathering] towers

@@ -4,17 +4,24 @@ using UnityEngine;
 /// <summary>
 /// Manages the cursor and provides methods for adding, removing, and setting custom cursors.
 /// </summary>
-public class Cursor : DDOLSingleton
+public class Cursor : MonoBehaviour
 {
+    public static Cursor Instance { get; protected set; }
+
     [Header("Parameters\n__________________")]
     [SerializeField]
     private SerializableDictionary<string, Texture2D> _cursorDictionary = new SerializableDictionary<string, Texture2D>();
 
     private Texture2D _cursorTexture;
 
-    protected override void Awake()
+    protected virtual void Awake()
     {
-        base.Awake();
+        if (Instance is not null)
+            Destroy(this);
+        else
+            Instance = this;
+
+        DontDestroyOnLoad(this);
         SetCursor(_cursorDictionary.Keys.First());
     }
 

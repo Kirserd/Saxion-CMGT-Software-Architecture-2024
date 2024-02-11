@@ -1,44 +1,74 @@
-﻿namespace MIRAI.Grid.Cell
+﻿using UnityEngine;
+
+namespace MIRAI.Grid.Cell
 {
-    public class Tower : GridCellShell
+    public class Tower : GridCellShell, IDamageable
     {
         private ITowerActor _actor;
-        protected override void Awake() { }
-    }
+        private TowerStats _stats;
+        private TowerSpriteSet _spriteSet;
 
-    public interface ITowerActor
-    {
-        ITargetSelector Selector { get; set; }
-        public void Act(SelectionResults selection);
-    }
+        public ITowerActor Actor => _actor;
+        public TowerStats Stats => _stats;
+        public TowerSpriteSet SpriteSet => _spriteSet;
 
-    public struct SelectionResults
-    {
-        public GridCellShell[] Results;
+        float IDamageable.MaxHP { get => _stats.MaxHP; }
+        float IDamageable.MinHP { get => _stats.MinHP; }
+        float IDamageable.HP
+        {
+            get => _stats.HP;
+            set => _stats.HP = Mathf.RoundToInt(value);
+        }
 
-        public SelectionResults(GridCellShell[] results) 
-            => Results = results;
-    }
+        public void SetParts(ITowerActor actor, TowerStats stats, TowerSpriteSet spriteSet)
+        {
+            _actor = actor;
+            _stats = stats;
+            _spriteSet = spriteSet;
+        }
+        public void InitSprite()
+        {
+            _renderer.sortingLayerName = "Tiles";
+            _renderer.sortingOrder = -1;
+            _renderer.color = Color.cyan;
 
-    public interface ITargetSelector
-    {
-        public SelectionResults GetSeletion();
-    }
+            _spriteSet.SetSpriteOfLevel(_renderer, 0);
+        }
+        public bool LevelUp()
+        {
+            if (_stats.Level >= _stats.MaxLevel)
+                return false;
 
-    public class GeneralStats
-    {
-        public int HP { get; set; }
-        public int MaxHP { get; set; }
-        public int MinHP { get; set; }
-    }
+            _stats.LevelUp();
+            _spriteSet.SetSpriteOfLevel(_renderer, _stats.Level);
 
-    public class TowerStats : GeneralStats
-    {
+            return true;
+        }
+        private void TryAct()
+        {
+            return; // stop act
 
-    }
+            GridCellShell[] selection = _actor.Selector.GetSeletion();
 
-    public class CreatureStats : GeneralStats
-    {
+            if (selection is null)
+                return;
 
+            _actor.Act(_actor.Selector.GetSeletion());
+        }
+
+        protected virtual void FixedUpdate()
+        {
+            if (!_stats.IsReadyToAct())
+                return;
+
+            TryAct();
+        }
+
+        void IDamageable.OnCriticalHealth() => Death();
+        void IDamageable.OnDamaged(float damageAmount) { }
+        void IDamageable.OnHealed(float healAmount) { }
+
+        protected virtual void Death() => GridRegistrar.OverwriteAt(X, Y, null);
+   
     }
 }

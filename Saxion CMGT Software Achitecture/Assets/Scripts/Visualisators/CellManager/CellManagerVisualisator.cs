@@ -1,4 +1,6 @@
-﻿using MIRAI.Grid.Cell;
+﻿using MIRAI.Grid;
+using MIRAI.Grid.Cell;
+using System;
 using UnityEngine;
 
 public class CellManagerVisualisator : Visualisator<CellManagerDataPacket>, ISubscriber
@@ -24,18 +26,32 @@ public class CellManagerVisualisator : Visualisator<CellManagerDataPacket>, ISub
     {
         _upgradeScreen.gameObject.SetActive(true);
 
-        if (Data.Selection.GetType().IsAssignableFrom(typeof(OpenCell)))
+        GridCellShell selected = Data.Selection;
+
+        if (!GridRegistrar.IsEmptyAt(selected.X, selected.Y))
+            selected = GridRegistrar.GetAt(selected.X, selected.Y).BoundShell;
+
+        _upgradeScreen.Name.text = selected.ShellTooltip.Name;
+        _upgradeScreen.Description.text = selected.ShellTooltip.Description;
+
+        Type selectedShellType = selected.GetType();
+        if (selectedShellType.IsAssignableFrom(typeof(OpenCell)))
         {
             _upgradeScreen.SetIconDisplay(false);
             _upgradeScreen.SetStatsDisplay(false);
         }
+        else if (selectedShellType.IsAssignableFrom(typeof(Tower)))
+        {
+            Tower tower = selected as Tower;
 
-        _upgradeScreen.Name.text = Data.Selection.ShellData.Name;
-        _upgradeScreen.Description.text = Data.Selection.ShellData.Description;
+            _upgradeScreen.SetIconDisplay(true, tower.ShellTooltip.Icon);
+            _upgradeScreen.SetStatsDisplay(true, tower.Stats);
+        }
     }
     private void DisplayBuildScreen()
     {
         _buildScreen.gameObject.SetActive(true);
+        _buildScreen.TryInitSlots(TowerBuildingShop.Instance.Slots);
     }
 
     public void ChangeScreenTo(int screenId)

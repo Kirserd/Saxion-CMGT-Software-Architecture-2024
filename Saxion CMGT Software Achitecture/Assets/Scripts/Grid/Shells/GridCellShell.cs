@@ -2,29 +2,39 @@
 
 namespace MIRAI.Grid.Cell
 {
+    [RequireComponent(typeof(SpriteRenderer))]
     public class GridCellShell : MonoBehaviour, ISubscriber
     {
         #region PARAMETERS
 
         [SerializeField]
-        private CellDisplayData _shellData;
-        public CellDisplayData ShellData => _shellData;
+        private ShellTooltip _shellTooltip;
+        public ShellTooltip ShellTooltip => _shellTooltip;
 
+        #endregion
+
+        #region COMPONENTS
+        protected SpriteRenderer _renderer;
         #endregion
 
         protected bool IsSelected;
         
-        protected int X;
-        protected int Y;
+        public int X { get; protected set; }
+        public int Y { get; protected set; }
 
         public void SetXY(int x, int y)
         {
             X = x;
             Y = y;
         }
+        public void SetTooltip(ShellTooltip shellTooltip)
+            =>_shellTooltip = shellTooltip;
 
-        protected virtual void Awake() 
-            => GridInteractor.OnSelectedHandler += OnAnyShellSelected;
+        protected virtual void Awake()
+        {
+            GridInteractor.OnSelectedHandler += OnAnyShellSelected;
+            _renderer = GetComponent<SpriteRenderer>();
+        }
 
         public virtual void Subscribe()
             => GridInteractor.OnSelectedHandler += OnAnyShellSelected;
@@ -46,6 +56,8 @@ namespace MIRAI.Grid.Cell
         protected virtual void OnDeselected() => IsSelected = false;
 
         public void DestroySelf() => Destroy(gameObject);
+        public GridCellShell InstantiateOther(GridCellShell other, Transform tilesParent) 
+            => Instantiate(other, tilesParent);
 
         protected virtual void OnDestroy()
         {
