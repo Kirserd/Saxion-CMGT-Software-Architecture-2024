@@ -1,0 +1,41 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fb11ddeb222b53a4c93279c61f624bd9, type: 3}
+  m_Name: TestGatheringTower Blueprint
+  m_EditorClassIdentifier: 
+  Tooltip: {fileID: 11400000, guid: 4577332873397c244a9f46b804e36c88, type: 2}
+  SpriteSet:
+    _sprites:
+    - {fileID: -628019797, guid: 10270b80484ec8946b1104d8fbffa8cf, type: 3}
+    - {fileID: 1783615474, guid: 10270b80484ec8946b1104d8fbffa8cf, type: 3}
+    - {fileID: -1298604419, guid: 10270b80484ec8946b1104d8fbffa8cf, type: 3}
+  Rules:
+    Mode: 0
+    Tags: []
+  Stats:
+    VIT:
+      _onLevelUpGrowth: 1
+      _base: 5
+    HP: 48
+    MaxLevel: 3
+    SPD:
+      _onLevelUpGrowth: 2
+      _base: 2
+    RNG:
+      _onLevelUpGrowth: 1
+      _base: 1
+    GAIN:
+      _onLevelUpGrowth: 1
+      _base: 3
+    LUK:
+      _onLevelUpGrowth: 1
+      _base: 1

@@ -8,8 +8,8 @@ namespace MIRAI.Grid.Cell
 
         #region PARAMETERS
         [SerializeField]
-        private TowerBlueprint[] _slots;
-        public TowerBlueprint[] Slots => _slots;
+        private TowerBuildingShopEntry[] _slots;
+        public TowerBuildingShopEntry[] Slots => _slots;
         #endregion
         
         private void Awake()

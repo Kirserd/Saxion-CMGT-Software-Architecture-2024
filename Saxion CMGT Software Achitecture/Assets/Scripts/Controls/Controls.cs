@@ -2,55 +2,6 @@ using UnityEngine;
 using System.Collections.Generic;
 using System.Linq;
 
-public abstract class InputCallback
-{
-    public delegate void Callback(InputCallbackData data);
-    public Callback CallbackHandler;
-
-    public abstract void Invoke();
-}
-public class KeyCallback : InputCallback
-{
-    public KeyCode Key;
-    public KeyCallback(KeyCode key) => Key = key;
-    public override void Invoke()
-    {
-        CallbackHandler?.Invoke(new InputCallbackData
-        (
-            Input.GetKeyDown(Key),
-            Input.GetKeyDown(Key),
-            Input.GetKeyUp(Key)
-        ));
-    }
-}
-public class MouseCallback : InputCallback
-{
-    public int MouseButton;
-    public MouseCallback(int mouseButton) => MouseButton = mouseButton;
-    public override void Invoke()
-    {
-        CallbackHandler?.Invoke(new InputCallbackData
-        (
-            Input.GetMouseButtonDown(MouseButton),
-            Input.GetMouseButton(MouseButton),
-            Input.GetMouseButtonUp(MouseButton)
-        ));
-    }
-}
-public struct InputCallbackData
-{
-    public bool IsPressed;
-    public bool IsDown;
-    public bool IsReleased;
-
-    public InputCallbackData(bool isPressed, bool isDown, bool isReleased)
-    {
-        IsPressed = isPressed;
-        IsDown = isDown;
-        IsReleased = isReleased;
-    }
-}
-
 public static class Controls
 {
     private static HashSet<InputCallback> _registeredInput = new()

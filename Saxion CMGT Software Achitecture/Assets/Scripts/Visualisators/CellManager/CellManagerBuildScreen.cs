@@ -9,7 +9,7 @@ public class CellManagerBuildScreen : MonoBehaviour
     private Transform _slotContainer;
 
     private bool _isInitialized = false;
-    public void TryInitSlots(TowerBlueprint[] slots)
+    public void TryInitSlots(TowerBuildingShopEntry[] slots)
     {
         if (_isInitialized)
             return;

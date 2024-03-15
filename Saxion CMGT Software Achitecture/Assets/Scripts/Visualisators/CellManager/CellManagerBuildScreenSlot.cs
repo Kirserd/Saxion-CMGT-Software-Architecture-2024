@@ -11,24 +11,31 @@ public class CellManagerBuildScreenSlot : MonoBehaviour
     [SerializeField]
     private Image _icon;
     [SerializeField]
-    private TextMeshProUGUI _name;
+    private TextMeshProUGUI _nameEntry;
+    [SerializeField]
+    private TextMeshProUGUI _costEntry;
 
-    public void SetData(TowerBlueprint blueprint)
+    private int _cost;
+
+    public void SetData(TowerBuildingShopEntry entry)
     {
-        _icon.sprite = blueprint.Tooltip.Icon;
-        _name.text = blueprint.Tooltip.Name;
-        Blueprint = blueprint;
+        _cost = entry.Cost;
+        _costEntry.text = entry.Cost + "$";
+
+        _icon.sprite = entry.Blueprint.Tooltip.Icon;
+        _nameEntry.text = entry.Blueprint.Tooltip.Name;
+        Blueprint = entry.Blueprint;
     }
     
     public void TryToBuy()
     {
         GridCellShell selected = GridInteractor.Selection;
-        Tower tower = TowerBuilder.BuildTower(Blueprint);
-        
-        if (GridRegistrar.TryRegisterAt(selected.X, selected.Y, tower))
-            return;
 
-        Destroy(tower.gameObject);
+        if(!GridRegistrar.IsEmptyAt(selected.X, selected.Y) || !Level.Instance.Resources.TryWithdrawMoney(_cost))
+        {
+            //TODO: VISUALIZE;
+            return;
+        }
+        GridRegistrar.TryRegisterAt(selected.X, selected.Y, TowerBuilder.BuildTower(Blueprint));
     }
 }
-
