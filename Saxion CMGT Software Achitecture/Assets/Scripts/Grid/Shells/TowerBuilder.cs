@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using MIRAI.Grid.Cell.TowerActors;
+using UnityEngine;
 
 namespace MIRAI.Grid.Cell
 {
@@ -17,18 +18,18 @@ namespace MIRAI.Grid.Cell
                 _ => null,
             };
 
-            ITowerActor actor = null;
             TowerStats stats = null;
+            ITowerActor actor = null;
 
             if (blueprint is OffensiveTowerBlueprint offensiveTowerBlueprint)
             {
-                actor = null;   //TODO: new OffensiveTowerActor(selector); 
                 stats = new OffensiveTowerStats(offensiveTowerBlueprint.Stats);
+                actor = null;   //TODO: new OffensiveTowerActor(selector); 
             }
             else if (blueprint is GatheringTowerBlueprint gatheringTowerBlueprint) 
-            { 
-                actor = null;   //TODO: new GatheringTowerActor(selector);
+            {
                 stats = new GatheringTowerStats(gatheringTowerBlueprint.Stats);
+                actor = new BasicGatheringActor() { Selector = selector, Stats = stats };
             }
 
             tower.SetParts(actor, stats, blueprint.SpriteSet);

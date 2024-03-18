@@ -1,21 +1,33 @@
-﻿public class LevelResources
+﻿using System;
+
+public class LevelResources
 {
-    public int Money => _money;
+
+    public Action<ResourceDataPacket> OnMoneyAmountChanged;
+    public int Money 
+    { 
+        get => _money;
+        set
+        {
+            _money = value;
+            OnMoneyAmountChanged?.Invoke(new() { Money = value });
+        }
+    }
     private int _money;
 
     public LevelResources(int startAmount)
     {
-        _money = startAmount;
+        Money = startAmount;
     }
 
     public bool TryWithdrawMoney(int amount)
     {
-        if (_money < amount)
+        if (Money < amount)
             return false;
 
-        _money -= amount;
+        Money -= amount;
         return true;
     }
     public void AddMoney(int amount) 
-        => _money += amount;
+        => Money += amount;
 }

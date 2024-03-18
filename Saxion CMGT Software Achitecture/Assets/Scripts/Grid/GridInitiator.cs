@@ -15,9 +15,18 @@ namespace MIRAI.Grid
         public TileBase[] RoadTiles;
         [SerializeField]
         public TileBase[] NonSolidTiles;
+        [SerializeField]
+        public TileBase EnemySpawnerTile;
+        [SerializeField]
+        public TileBase NexusTile;
         [Space(5)]
         [SerializeField]
         private GridCellShell _openShellPrefab;
+        [SerializeField]
+        private GridCellShell _enemySpawnerShellPrefab;
+        [SerializeField]
+        private GridCellShell _nexusShellPrefab;
+        [Space(5)]
         [SerializeField]
         private Transform _tilesParent;
 
@@ -34,6 +43,9 @@ namespace MIRAI.Grid
 
         private Tilemap _tilemap;
         private Vector2 _cellSize;
+
+        private BoundsInt _bounds;
+        private Vector2Int _boundsOffset;
         #endregion
 
         private void OnValidate()
@@ -45,6 +57,7 @@ namespace MIRAI.Grid
         }
 
         private void Awake() => Instance = this;
+
         private void Start()
         {
             _tilemap = GetComponent<Tilemap>();
@@ -54,31 +67,36 @@ namespace MIRAI.Grid
         private void InitializeGrid()
         {
             _cellSize = _tilemap.cellSize;
-            BoundsInt bounds = _tilemap.cellBounds;
-            Vector2Int boundsOffset = new(-bounds.xMin, -bounds.yMin);
+           _bounds = _tilemap.cellBounds;
+            _boundsOffset = new(-_bounds.xMin, -_bounds.yMin);
 
-            _grid = new GridCell[bounds.xMax + boundsOffset.x, bounds.yMax + boundsOffset.y];
+            _grid = new GridCell[_bounds.xMax + _boundsOffset.x, _bounds.yMax + _boundsOffset.y];
 
+            OpenShellPass();
+            FunctionalTilePass();
+
+            FinalizeInitialisation(new()
+            {
+                Offset = _boundsOffset,
+                CellSize = _cellSize,
+                TilesParent = _tilesParent
+            });
+        }
+        private void OpenShellPass()
+        {
             int sample;
             Vector3Int samplePosition;
             Vector2Int XYWithOffset;
 
             HashSet<Vector2Int> uniqueShellPositions = new();
 
-            ShellPositioningData shellInstantiationData = new()
-            {
-                Offset = boundsOffset,
-                CellSize = _cellSize,
-                TilesParent = _tilesParent
-            };
-
-            for (int x = bounds.xMin; x < bounds.xMax; x++)
-            for (int y = bounds.yMin; y < bounds.yMax; y++)
+            for (int x = _bounds.xMin; x < _bounds.xMax; x++)
+            for (int y = _bounds.yMin; y < _bounds.yMax; y++)
             {
                 samplePosition = new(x, y, 0);
                 TileBase tile = _tilemap.GetTile(samplePosition);
 
-                if (!_roadTiles.Contains(tile))
+                if (!_roadTiles.Contains(tile) || tile == NexusTile || tile == EnemySpawnerTile)
                     continue;
 
                 sample = x + 1;
@@ -97,27 +115,45 @@ namespace MIRAI.Grid
                 samplePosition = new(x, sample, 0);
                 Sample(false);
 
-                OverwriteCell(x + boundsOffset.x, y + boundsOffset.y, GridCell.Empty());
+                OverwriteCell(x + _boundsOffset.x, y + _boundsOffset.y, GridCell.Empty());
 
                 void Sample(bool isX)
                 {
-                    XYWithOffset = new((isX ? sample : x) + boundsOffset.x, (isX ? y : sample) + boundsOffset.y);
+                    XYWithOffset = new((isX ? sample : x) + _boundsOffset.x, (isX ? y : sample) + _boundsOffset.y);
 
                     if (GridCell.IsEmpty(_grid[XYWithOffset.x, XYWithOffset.y])
-                    && sample < (isX ? bounds.xMax : bounds.yMax)
-                    && sample >= (isX ? -boundsOffset.x : -boundsOffset.y)
+                    && sample < (isX ? _bounds.xMax : _bounds.yMax)
+                    && sample >= (isX ? -_boundsOffset.x : -_boundsOffset.y)
                     && !_roadTiles.Contains(_tilemap.GetTile(samplePosition))
                     && _nonSolidTiles.Contains(_tilemap.GetTile(samplePosition)))
                     {
                         OverwriteCell(XYWithOffset.x, XYWithOffset.y, new GridCell(null));
 
-                        if(!uniqueShellPositions.Contains(XYWithOffset))
+                        if (!uniqueShellPositions.Contains(XYWithOffset))
                             uniqueShellPositions.Add(XYWithOffset);
                     }
                 }
             }
-            InstantiateShellBatch(uniqueShellPositions);
-            FinalizeInitialisation(shellInstantiationData);
+            InstantiateShellBatch(uniqueShellPositions, _openShellPrefab);
+        }
+        private void FunctionalTilePass()
+        {
+            Vector3Int samplePosition;
+            Vector2Int XYWithOffset;
+
+            for (int x = _bounds.xMin; x < _bounds.xMax; x++)
+            for (int y = _bounds.yMin; y < _bounds.yMax; y++)
+            {
+                samplePosition = new(x, y, 0);
+                XYWithOffset = new Vector2Int(x + _boundsOffset.x, y + _boundsOffset.y);
+
+                TileBase tile = _tilemap.GetTile(samplePosition);
+
+                if (tile == NexusTile)
+                    OverwriteCell(XYWithOffset.x, XYWithOffset.y, new GridCell(InstantiateShell(XYWithOffset, _nexusShellPrefab)));
+                else if (tile == EnemySpawnerTile)
+                    OverwriteCell(XYWithOffset.x, XYWithOffset.y, new GridCell(InstantiateShell(XYWithOffset, _enemySpawnerShellPrefab)));
+            }
         }
         private void OverwriteCell(int x, int y, GridCell cell)
         {
@@ -127,14 +163,18 @@ namespace MIRAI.Grid
 
             _grid[x, y] = cell;
         }
-        private void InstantiateShellBatch(in HashSet<Vector2Int> positionsToInstantiate)
+        private GridCellShell InstantiateShell(Vector2Int position, GridCellShell prefab)
+        {
+            GridCellShell instanced = Instantiate(prefab, _tilesParent);
+            instanced.SetXY(position.x, position.y);
+            instanced.transform.localPosition = new Vector3(position.x * _cellSize.x, position.y * _cellSize.y);
+            return instanced;
+        }
+        private void InstantiateShellBatch(in HashSet<Vector2Int> positionsToInstantiate, GridCellShell prefab)
         {
             foreach (var position in positionsToInstantiate)
-            {
-                GridCellShell instanced = Instantiate(_openShellPrefab, _tilesParent);
-                instanced.SetXY(position.x, position.y);
-                instanced.transform.localPosition = new Vector3(position.x * _cellSize.x, position.y * _cellSize.y);
-            }
+                InstantiateShell(position, prefab);
+
             positionsToInstantiate.Clear();
         }
         private void FinalizeInitialisation(ShellPositioningData data)

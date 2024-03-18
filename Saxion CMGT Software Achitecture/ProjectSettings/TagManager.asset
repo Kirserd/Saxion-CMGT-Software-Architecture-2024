@@ -45,6 +45,9 @@ TagManager:
   - name: Tiles
     uniqueID: 1876411697
     locked: 0
+  - name: Enemy
+    uniqueID: 3937554657
+    locked: 0
   - name: GUI
     uniqueID: 1686323257
     locked: 0

@@ -1,4 +1,6 @@
 ﻿using UnityEngine;
+using MIRAI.Grid.Cell.TowerActors;
+
 
 namespace MIRAI.Grid.Cell
 {
@@ -46,14 +48,8 @@ namespace MIRAI.Grid.Cell
         }
         private void TryAct()
         {
-            return; // stop act
-
-            GridCellShell[] selection = _actor.Selector.GetSeletion();
-
-            if (selection is null)
-                return;
-
-            _actor.Act(_actor.Selector.GetSeletion());
+            GridCellShell[] selection = _actor?.Selector?.GetSeletion();
+            _actor?.Act(selection);
         }
 
         protected virtual void FixedUpdate()
