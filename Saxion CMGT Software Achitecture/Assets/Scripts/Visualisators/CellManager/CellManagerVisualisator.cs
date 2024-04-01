@@ -1,5 +1,6 @@
 ﻿using MIRAI.Grid;
 using MIRAI.Grid.Cell;
+using MIRAI.Grid.Cell.Registrars;
 using System;
 using UnityEngine;
 
@@ -51,7 +52,7 @@ public class CellManagerVisualisator : Visualisator<CellManagerDataPacket>, ISub
     private void DisplayBuildScreen()
     {
         _buildScreen.gameObject.SetActive(true);
-        _buildScreen.TryInitSlots(TowerBuildingShop.Instance.Slots);
+        _buildScreen.TryInitSlots(TowerRegistrar.Instance.Slots);
     }
 
     public void ChangeScreenTo(int screenId)

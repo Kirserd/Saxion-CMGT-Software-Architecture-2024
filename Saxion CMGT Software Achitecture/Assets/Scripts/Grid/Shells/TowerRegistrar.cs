@@ -1,10 +1,11 @@
 ﻿using UnityEngine;
 
-namespace MIRAI.Grid.Cell
+namespace MIRAI.Grid.Cell.Registrars
 {
-    public class TowerBuildingShop : MonoBehaviour
+
+    public class TowerRegistrar : MonoBehaviour
     {
-        public static TowerBuildingShop Instance { get; private set; }
+        public static TowerRegistrar Instance { get; private set; }
 
         #region PARAMETERS
         [SerializeField]

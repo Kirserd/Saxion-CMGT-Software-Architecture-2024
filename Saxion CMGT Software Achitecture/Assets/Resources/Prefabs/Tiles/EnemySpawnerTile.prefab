@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 5052266473301710749}
   - component: {fileID: 3669929320183103262}
   - component: {fileID: 7273320478917265932}
-  - component: {fileID: 6410663216730730805}
+  - component: {fileID: 8952667925981061495}
   m_Layer: 3
   m_Name: EnemySpawnerTile
   m_TagString: Untagged
@@ -97,8 +97,8 @@ SpriteRenderer:
   m_SortingLayerID: 1876411697
   m_SortingLayer: 1
   m_SortingOrder: 0
-  m_Sprite: {fileID: -389194911, guid: c17c8eec58c4b3f43abea559af1f4a86, type: 3}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Sprite: {fileID: -1262480896, guid: c17c8eec58c4b3f43abea559af1f4a86, type: 3}
+  m_Color: {r: 1, g: 0, b: 0, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -153,7 +153,7 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 0.16, y: 0.16}
   m_EdgeRadius: 0
---- !u!114 &6410663216730730805
+--- !u!114 &8952667925981061495
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -162,7 +162,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 8072862900002278765}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cab97a74d6e78c04fb53a066f1256982, type: 3}
+  m_Script: {fileID: 11500000, guid: 17aae6c1508ae0943ab3139804690638, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _shellTooltip: {fileID: 11400000, guid: cc2de7f3e5be6d84982c37381bbae931, type: 2}
+  _shellTooltip: {fileID: 11400000, guid: 50a0f45925b442840906e34461dfafe9, type: 2}

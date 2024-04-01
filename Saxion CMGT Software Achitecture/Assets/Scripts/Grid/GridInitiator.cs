@@ -11,15 +11,19 @@ namespace MIRAI.Grid
         #region PARAMETER FIELDS
 
         [Header("Parameters\n-------------")]
+        [Header("Tile masks")]
         [SerializeField]
         public TileBase[] RoadTiles;
         [SerializeField]
         public TileBase[] NonSolidTiles;
+        [Space(5)]
+        [Header("Functional tile masks")]
         [SerializeField]
         public TileBase EnemySpawnerTile;
         [SerializeField]
         public TileBase NexusTile;
         [Space(5)]
+        [Header("Shell prefabs")]
         [SerializeField]
         private GridCellShell _openShellPrefab;
         [SerializeField]
@@ -27,6 +31,7 @@ namespace MIRAI.Grid
         [SerializeField]
         private GridCellShell _nexusShellPrefab;
         [Space(5)]
+        [Header("Hierarchy structuring")]
         [SerializeField]
         private Transform _tilesParent;
 
@@ -57,22 +62,19 @@ namespace MIRAI.Grid
         }
 
         private void Awake() => Instance = this;
+        private void Start() => Initiate();
 
-        private void Start()
+        private void Initiate()
         {
             _tilemap = GetComponent<Tilemap>();
-            InitializeGrid();
-        }
 
-        private void InitializeGrid()
-        {
             _cellSize = _tilemap.cellSize;
-           _bounds = _tilemap.cellBounds;
+            _bounds = _tilemap.cellBounds;
             _boundsOffset = new(-_bounds.xMin, -_bounds.yMin);
 
             _grid = new GridCell[_bounds.xMax + _boundsOffset.x, _bounds.yMax + _boundsOffset.y];
 
-            OpenShellPass();
+            TilePass();
             FunctionalTilePass();
 
             FinalizeInitialisation(new()
@@ -82,7 +84,10 @@ namespace MIRAI.Grid
                 TilesParent = _tilesParent
             });
         }
-        private void OpenShellPass()
+
+        #region PASSES
+
+        private void TilePass()
         {
             int sample;
             Vector3Int samplePosition;
@@ -115,7 +120,7 @@ namespace MIRAI.Grid
                 samplePosition = new(x, sample, 0);
                 Sample(false);
 
-                OverwriteCell(x + _boundsOffset.x, y + _boundsOffset.y, GridCell.Empty());
+                OverwriteCell(x + _boundsOffset.x, y + _boundsOffset.y, GridCell.Road());
 
                 void Sample(bool isX)
                 {
@@ -155,6 +160,11 @@ namespace MIRAI.Grid
                     OverwriteCell(XYWithOffset.x, XYWithOffset.y, new GridCell(InstantiateShell(XYWithOffset, _enemySpawnerShellPrefab)));
             }
         }
+
+        #endregion
+
+        #region CONTROLLERS
+
         private void OverwriteCell(int x, int y, GridCell cell)
         {
             GridCell prevCell = _grid[x, y];
@@ -182,5 +192,7 @@ namespace MIRAI.Grid
             GridRegistrar.Refresh(_grid, data);
             Destroy(this);
         }
+
+        #endregion
     }
 }
